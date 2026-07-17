@@ -1,4 +1,4 @@
-;;; ox-hugo.el --- Hugo Markdown Back-End for Org Export Engine  -*- lexical-binding: t -*-
+;;; ox-astro.el --- Hugo Markdown Back-End for Org Export Engine  -*- lexical-binding: t -*-
 
 ;; Author: Kaushal Modi <kaushal.modi@gmail.com>
 ;;         Matt Price <moptop99@gmail.com>
@@ -240,14 +240,14 @@ Dummy Org file paths are created in
 `org-hugo--get-pre-processed-buffer' by appending this variable
 to the link targets out of the current subtree scope.")
 
-
+
 ;;; Obsoletions
 
 (define-obsolete-variable-alias 'org-hugo-default-section-directory 'org-hugo-section "Oct 31, 2018")
 (define-obsolete-function-alias 'org-hugo-headline 'org-hugo-heading "Jan 3, 2022")
 
 
-
+
 ;;; User-Configurable Variables
 
 (defgroup org-export-hugo nil
@@ -761,7 +761,7 @@ The software list is taken from https://www.gnu.org/software/."
   :type '(repeat string))
 
 
-
+
 ;;; Define Back-End
 
 (org-export-define-derived-backend 'hugo 'blackfriday ;hugo < blackfriday < md < html
@@ -916,7 +916,7 @@ The software list is taken from https://www.gnu.org/software/."
                    (:hugo-weight "HUGO_WEIGHT" nil nil space)))
 
 
-
+
 ;;; Miscellaneous Helper Functions
 
 ;;;; Check if a value is non-nil
@@ -1067,7 +1067,7 @@ This function is called in the very beginning of
 
 SUBTREEP is non-nil for subtree-based exports.
 
-This function is used to advise few functions.  Those advices are
+This function is used to advise few functions.  Those advice are
 effective only while an ox-hugo export is in progress because
 they get removed later in `org-hugo--after-1-export-function'.
 
@@ -1848,7 +1848,7 @@ ARGS are the ORIG-FUN function's arguments."
         (message-log-max nil))   ;Don't show the messages in the *Messages* buffer
     (apply orig-fun args)))
 
-;;;; Plainify (mimick the Hugo plainify function)
+;;;; Plainify (mimic the Hugo plainify function)
 (defun org-hugo--plainify-string (str info)
   "Return STR string without any markup.
 
@@ -1856,7 +1856,7 @@ INFO is a plist used as a communication channel.
 
 If STR is an empty string or nil, return nil.
 
-This function aims to mimick the Hugo `plainify' function:
+This function aims to mimic the Hugo `plainify' function:
 https://gohugo.io/functions/plainify/.  For example, if STR is
 \"string *with* some /markup/\", the returned string is \"string
 with some markup\"."
@@ -1866,7 +1866,7 @@ with some markup\"."
     (org-export-data-with-backend str 'html info))))
 
 
-
+
 ;;; Transcode Functions
 
 ;;;; Code (<kdb> tags)
@@ -2160,7 +2160,7 @@ a communication channel."
                   (and contents (replace-regexp-in-string "^" "    " contents)))))
        (t
         (let* ((anchor (when org-hugo-headline-anchor
-                         (format "{#%s}" (org-hugo--get-anchor heading info)))) ;https://gohugo.io/extras/crossreferences/
+                         (format "{#%s}" (org-hugo--get-anchor heading info)))) ;https://gohugo.io/extras/cross-references/
                (heading-title (org-hugo--heading-title style level loffset title
                                                        todo-fmtd tags-fmtd anchor numbers))
                (wrap-element (org-hugo--container heading info))
@@ -2991,7 +2991,7 @@ and rewrite link paths to make blogging more seamless."
                                                      (format "%s=\"%s\" "
                                                              name val))))))
                 ;; (message "[org-hugo-link DBG] figure params: %s" figure-param-str)
-                (format "{{< figure %s >}}" (org-trim figure-param-str)))))))))
+                (format "![Image](%s)" (org-trim figure-param-str)))))))))
      ((string= type "coderef")
       (let* ((ref-label (org-element-property :path link))
              (ref-info (org-hugo-link--resolve-coderef ref-label info))
@@ -3238,13 +3238,13 @@ INFO is a plist used as a communication channel."
          ret)
     (unless (file-directory-p static-dir)
       (user-error "Please create the %s directory" static-dir))
-    ;; (message "[ox-hugo DBG attch rewrite] Image export dir is: %s" static-dir)
-    ;; (message "[ox-hugo DBG attch rewrite] path: %s" path)
-    ;; (message "[ox-hugo DBG attch rewrite] path-true: %s" path-true)
-    ;; (message "[ox-hugo DBG attch rewrite] bundle-dir: %s" bundle-dir)
-    ;; (message "[ox-hugo DBG attch rewrite] bundle-name: %s" bundle-name)
-    ;; (message "[ox-hugo DBG attch rewrite] default-dir: %s" default-directory)
-    ;; (message "[ox-hugo DBG attch rewrite] dest-dir: %s" dest-dir)
+    ;; (message "[ox-hugo DBG attach rewrite] Image export dir is: %s" static-dir)
+    ;; (message "[ox-hugo DBG attach rewrite] path: %s" path)
+    ;; (message "[ox-hugo DBG attach rewrite] path-true: %s" path-true)
+    ;; (message "[ox-hugo DBG attach rewrite] bundle-dir: %s" bundle-dir)
+    ;; (message "[ox-hugo DBG attach rewrite] bundle-name: %s" bundle-name)
+    ;; (message "[ox-hugo DBG attach rewrite] default-dir: %s" default-directory)
+    ;; (message "[ox-hugo DBG attach rewrite] dest-dir: %s" dest-dir)
     (if (and (file-exists-p path-true)
              (member (file-name-extension path-unhexified) exportables)
              (file-directory-p dest-dir))
@@ -3260,7 +3260,7 @@ INFO is a plist used as a communication channel."
                      ((string-match "/static/" path-true)
                       ;; `path-true' is "/foo/static/bar/baz.png",
                       ;; return "bar/baz.png".
-                      ;; (message "[ox-hugo DBG attch rewrite] path contains static")
+                      ;; (message "[ox-hugo DBG attach rewrite] path contains static")
                       ;; If path-true contains "/static/", set the
                       ;; `dest-dir' to `static-dir' (even if this is a
                       ;; page bundle).
@@ -3273,8 +3273,8 @@ INFO is a plist used as a communication channel."
                         ;; "<BUNDLE_NAME>", `path-true' is
                         ;; "<ORG_FILE_DIR>/bar/<BUNDLE_NAME>/zoo/baz.png",
                         ;; return "zoo/baz.png".
-                        ;; (message "[ox-hugo DBG attch rewrite BUNDLE 1] bundle-name: %s" bundle-name)
-                        ;; (message "[ox-hugo DBG attch rewrite BUNDLE 1] attch along with Org content: %s"
+                        ;; (message "[ox-hugo DBG attach rewrite BUNDLE 1] bundle-name: %s" bundle-name)
+                        ;; (message "[ox-hugo DBG attach rewrite BUNDLE 1] attach along with Org content: %s"
                         ;;          (substring path-true (match-end 0)))
                         (substring path-true (match-end 0)))
                        ((string-match (regexp-quote default-directory) path-true)
@@ -3282,21 +3282,21 @@ INFO is a plist used as a communication channel."
                         ;; "<ORG_FILE_DIR>/", `path-true' is
                         ;; "<ORG_FILE_DIR>/bar/baz.png", return
                         ;; "bar/baz.png".
-                        ;; (message "[ox-hugo DBG attch rewrite BUNDLE 2] attch along with Org content: %s"
+                        ;; (message "[ox-hugo DBG attach rewrite BUNDLE 2] attach along with Org content: %s"
                         ;;          (substring path-true (match-end 0)))
                         (substring path-true (match-end 0)))
                        (t
                         ;; This is a page bundle.  `default-path' is
                         ;; "<ORG_FILE_DIR>/", `path-true' is
                         ;; "/foo/bar/baz.png", return "baz.png".
-                        ;; (message "[ox-hugo DBG attch rewrite BUNDLE 3] attch neither in static nor in Org file dir")
+                        ;; (message "[ox-hugo DBG attach rewrite BUNDLE 3] attach neither in static nor in Org file dir")
                         (file-name-nondirectory path-unhexified))))
                      (t
                       ;; Else, `path-true' is "/foo/bar/baz.png",
                       ;; return "ox-hugo/baz.png".  "ox-hugo" is the
                       ;; default value of
                       ;; `org-hugo-default-static-subdirectory-for-externals'.
-                      ;; (message "[ox-hugo DBG attch rewrite] neither BUNDLE nor contains static")
+                      ;; (message "[ox-hugo DBG attach rewrite] neither BUNDLE nor contains static")
                       (concat
                        (file-name-as-directory org-hugo-default-static-subdirectory-for-externals)
                        (file-name-nondirectory path-unhexified)))))
@@ -3309,9 +3309,9 @@ INFO is a plist used as a communication channel."
               ;; if needed below.
               (unless (file-exists-p dest-path-dir)
                 (mkdir dest-path-dir :parents))
-              ;; (message "[ox-hugo DBG attch rewrite] file-name-relative-path: %s" file-name-relative-path)
-              ;; (message "[ox-hugo DBG attch rewrite] dest-path: %s" dest-path)
-              ;; (message "[ox-hugo DBG attch rewrite] dest-path-dir: %s" dest-path-dir)
+              ;; (message "[ox-hugo DBG attach rewrite] file-name-relative-path: %s" file-name-relative-path)
+              ;; (message "[ox-hugo DBG attach rewrite] dest-path: %s" dest-path)
+              ;; (message "[ox-hugo DBG attach rewrite] dest-path-dir: %s" dest-path-dir)
 
               ;; Do the copy only if the file to be copied is newer or
               ;; doesn't exist in the static dir.
@@ -3327,7 +3327,7 @@ INFO is a plist used as a communication channel."
                             file-name-relative-path
                           (concat "/" file-name-relative-path))))))
       (setq ret path))
-    ;; (message "[ox-hugo DBG attch rewrite] returned path: %s" ret)
+    ;; (message "[ox-hugo DBG attach rewrite] returned path: %s" ret)
     ret))
 
 ;;;; Paragraph
@@ -3758,7 +3758,7 @@ INFO is a plist holding export options."
         (org-blackfriday-special-block special-block contents info))))))
 
 
-
+
 ;;; Filter Functions
 
 ;;;; Body Filter
@@ -4767,7 +4767,7 @@ links."
         buffer))))
 
 
-
+
 ;;; Interactive functions
 
 ;;;###autoload
@@ -5028,6 +5028,6 @@ buffer and returned as a string in Org format."
     info-org))
 
 
-(provide 'ox-hugo)
+(provide 'ox-astro)
 
-;;; ox-hugo.el ends here
+;;; ox-astro.el ends here
