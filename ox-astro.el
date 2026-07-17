@@ -2160,7 +2160,7 @@ a communication channel."
                   (and contents (replace-regexp-in-string "^" "    " contents)))))
        (t
         (let* ((anchor (when org-hugo-headline-anchor
-                         (format "{#%s}" (org-hugo--get-anchor heading info)))) ;https://gohugo.io/extras/cross-references/
+                         (format "" (org-hugo--get-anchor heading info)))) ;https://gohugo.io/extras/cross-references/
                (heading-title (org-hugo--heading-title style level loffset title
                                                        todo-fmtd tags-fmtd anchor numbers))
                (wrap-element (org-hugo--container heading info))
