@@ -2989,7 +2989,7 @@ and rewrite link paths to make blogging more seamless."
                     (when val
                       (setq figure-param-str (concat figure-param-str
                                                      (format "%s"
-                                                             name val))))))
+                                                             val))))))
                 ;; (message "[org-hugo-link DBG] figure params: %s" figure-param-str)
                 (format "![Image](%s)" (org-trim figure-param-str)))))))))
      ((string= type "coderef")
